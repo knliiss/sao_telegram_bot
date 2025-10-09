@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
 
-    UserConsumerService userConsumerService;
     UsersApiClient usersApiClient;
 
     public UserDTO getUser(long chatId) {
@@ -28,8 +27,16 @@ public class UserService {
         usersApiClient.updateUser(chatId, null, locationId, null);
     }
 
-    public void setUserAccountName(long chatId, String accountName) {
-        usersApiClient.updateUser(chatId, accountName, null, null);
+    public void setUserNickName(long chatId, String nickName) {
+        usersApiClient.updateUser(chatId, nickName, null, null);
+    }
+
+    public boolean isNickNameValid(String nickName) {
+        return nickName != null && nickName.length() >= 3 && nickName.length() <= 20 && nickName.matches("^[a-zA-Z0-9_]+$");
+    }
+
+    public Boolean isAccountNameAvailable(String accountName) {
+        return usersApiClient.existsByNickname(accountName);
     }
 
 

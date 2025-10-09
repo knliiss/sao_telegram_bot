@@ -1,8 +1,11 @@
 package dev.knalis.sao_telegram_bot.client.api;
 
-import dev.knalis.sao_telegram_bot.client.dto.*;
+import dev.knalis.sao_telegram_bot.client.dto.UserCreateRequest;
+import dev.knalis.sao_telegram_bot.client.dto.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @FeignClient(name = "usersApi", url = "${api.bot}")
@@ -33,5 +36,9 @@ public interface UsersApiClient {
 
     @GetMapping("/api/v1/users/by-nickname/{nickname}")
     UserDTO getUserByNickname(@PathVariable("nickname") String nickname);
+
+    @GetMapping("/exists-by-nickname/{nickname}")
+    boolean existsByNickname(@PathVariable String nickname);
+
 }
 

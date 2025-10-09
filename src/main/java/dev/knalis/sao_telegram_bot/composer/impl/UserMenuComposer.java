@@ -32,7 +32,7 @@ public class UserMenuComposer implements BackComposer {
         var user = userClient.getUser(chatId);
 
         if (user == null) {
-            return "_Пользователь не найден_";
+            return "Пользователь не найден";
         }
 
         StringBuilder builder = new StringBuilder();

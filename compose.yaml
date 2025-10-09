@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    image: saobot:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - MAIN_DATABASE_SERVICE_PORT=${MAIN_DATABASE_SERVICE_PORT}
+    ports:
+      - '8090:8080'
+    depends_on:
+      - mongodb
+      - postgres
+
+  mongodb:
+    image: 'mongo:latest'
+    environment:
+      - MONGO_INITDB_DATABASE=SaoBot_Mongo_Db
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - POSTGRES_DB=SaoBot_Pg_Db
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    ports:
+      - '5432:5432'
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  mongo_data:
+  pg_data:

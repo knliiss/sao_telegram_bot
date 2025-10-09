@@ -28,41 +28,42 @@ public class UserMenuComposer implements BackComposer {
     public String composeText(ComposerContext context) {
         String chatIdStr = context.get(ContextKey.CHAT_ID);
         Long chatId = Long.valueOf(chatIdStr);
+
         var messagePack = userMessagePacksClient.getUserMessagePacks(chatId, true).getFirst();
         var user = userClient.getUser(chatId);
 
-        if (user == null) {
-            return "Пользователь не найден";
-        }
+        if (user == null) return "Пользователь не найден";
 
         StringBuilder builder = new StringBuilder();
-        builder.append("*👤 Информация о пользователе*\n\n");
-        builder.append("*ID:* `").append(user.getId()).append("`\n");
-        builder.append("*Имя пользователя:* @").append(user.getUsername() != null ? user.getUsername() : "не задано").append("\n");
-        builder.append("*Ник:* ").append(user.getNickname() != null ? user.getNickname() : "не задан").append("\n");
-        builder.append("*Баланс:* ").append(user.getBalance() != null ? user.getBalance() : 0.0).append(" 💰\n");
-        builder.append("*Локация:* ").append(user.getLocation()).append("\n");
-        builder.append("*Выбранный пак сообщений:* ").append(messagePack.getName()).append("\n");
+        builder.append("<b>👤 Информация о пользователе</b>\n\n")
+                .append("<b>ID:</b> <code>").append(user.getId()).append("</code>\n")
+                .append("<b>Имя пользователя:</b> @").append(user.getUsername() != null ? user.getUsername() : "не задано").append("\n")
+                .append("<b>Ник:</b> ").append(user.getNickname() != null ? user.getNickname() : "не задан").append("\n")
+                .append("<b>Баланс:</b> ").append(user.getBalance() != null ? user.getBalance() : 0.0).append(" 💰\n")
+                .append("<b>Локация:</b> ").append(user.getLocation()).append("\n")
+                .append("<b>Выбранный пак сообщений:</b> ").append(messagePack.getName()).append("\n\n");
 
         if (user.getSubscription() != null) {
-            builder.append("*Подписка:* ").append(user.getSubscription().getPlan())
+            builder.append("<b>Подписка:</b> ")
+                    .append(user.getSubscription().getPlan())
                     .append(" (до ").append(user.getSubscription().getEndDate()).append(")\n");
         } else {
-            builder.append("*Подписка:* отсутствует\n");
+            builder.append("<b>Подписка:</b> отсутствует\n");
         }
 
         if (user.getRoles() != null && !user.getRoles().isEmpty()) {
-            builder.append("*Роли:* ").append(String.join(", ", user.getRoles())).append("\n");
+            builder.append("<b>Роли:</b> ").append(String.join(", ", user.getRoles())).append("\n");
         }
 
         if (user.getAdditionalAccounts() != null && !user.getAdditionalAccounts().isEmpty()) {
-            builder.append("*Дополнительные аккаунты:* ")
+            builder.append("<b>Дополнительные аккаунты:</b> ")
                     .append(String.join(", ", user.getAdditionalAccounts()))
                     .append("\n");
         }
 
         return builder.toString();
     }
+
 
     @Override
     public List<List<InlineKeyboardButton>> composeButtons(ComposerContext context) {

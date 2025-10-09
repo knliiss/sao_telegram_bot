@@ -26,16 +26,16 @@ public class TelegramSenderService {
     public Integer sendMessage(long chatId, String text) {
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
-                .text(escape(text))
-                .parseMode(ParseMode.MARKDOWNV2)
+                .text(escapeHtmlExceptTags(text))
+                .parseMode(ParseMode.HTML)
                 .build();
         return sendMessage(chatId, message);
     }
 
     public Integer sendMessage(long chatId, SendMessage message) {
-        message.setParseMode(ParseMode.MARKDOWNV2);
+        message.setParseMode(ParseMode.HTML);
         message.setChatId(chatId);
-        message.setText(escape(message.getText()));
+        message.setText(escapeHtmlExceptTags(message.getText()));
         try {
             Message sent = bot.execute(message);
             return sent.getMessageId();
@@ -50,15 +50,15 @@ public class TelegramSenderService {
         SendPhoto photo = SendPhoto.builder()
                 .chatId(chatId.toString())
                 .photo(new InputFile(photoStream, fileName))
-                .caption(escape(caption))
-                .parseMode(ParseMode.MARKDOWNV2)
+                .caption(escapeHtmlExceptTags(caption))
+                .parseMode(ParseMode.HTML)
                 .build();
         return sendPhoto(photo);
     }
 
     public Integer sendPhoto(SendPhoto photo) {
-        photo.setParseMode(ParseMode.MARKDOWNV2);
-        photo.setCaption(escape(photo.getCaption()));
+        photo.setParseMode(ParseMode.HTML);
+        photo.setCaption(escapeHtmlExceptTags(photo.getCaption()));
         try {
             Message sent = bot.execute(photo);
             return sent.getMessageId();
@@ -70,19 +70,18 @@ public class TelegramSenderService {
 
     // --- EDIT MESSAGE ---
     public boolean editMessage(long chatId, int messageId, String newText) {
-        String safeText = escape(newText);
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text(safeText)
-                .parseMode(ParseMode.MARKDOWNV2)
+                .text(escapeHtmlExceptTags(newText))
+                .parseMode(ParseMode.HTML)
                 .build();
         return editMessage(edit);
     }
 
     public boolean editMessage(EditMessageText editMessage) {
-        editMessage.setParseMode(ParseMode.MARKDOWNV2);
-        editMessage.setText(escape(editMessage.getText()));
+        editMessage.setParseMode(ParseMode.HTML);
+        editMessage.setText(escapeHtmlExceptTags(editMessage.getText()));
         try {
             Object result = bot.execute(editMessage);
             if (result instanceof Boolean) {
@@ -105,22 +104,21 @@ public class TelegramSenderService {
         }
     }
 
-    private String escape(String caption) {
-        if (caption == null) return null;
-        return caption
-                .replace("_", "\\_")
-                .replace("*", "\\*")
-                .replace("[", "\\[")
-                .replace("]", "\\]")
-                .replace("(", "\\(")
-                .replace(")", "\\)")
-                .replace("~", "\\~")
-                .replace("`", "\\`")
-                .replace(">", "\\>")
-                .replace("#", "\\#")
-                .replace("+", "\\+")
-                .replace("-", "\\-");
+
+    private String escapeHtmlExceptTags(String text) {
+        if (text == null || text.isEmpty()) return text;
+
+        String safe = text
+                .replaceAll("(?i)<(/?)(b|i|u|s|code|pre|a|br)(\\s[^>]*)?>", "%%TAG_START%%$1$2$3%%TAG_END%%");
+
+        safe = safe.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;");
+
+        safe = safe.replaceAll("%%TAG_START%%", "<")
+                .replaceAll("%%TAG_END%%", ">");
+
+        return safe;
     }
-
-
 }

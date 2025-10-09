@@ -119,7 +119,7 @@ public class CallbackRouter {
             method.setAccessible(true);
             method.invoke(route.controller(), args);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Обработчик не нашел нужный метод для сallback: {}", route.regex());
         }
     }
 

@@ -11,10 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Command(value = "/help", description = "Получить справочник по командам", aliases = {"/h", "/?"}, minArgs = 0, maxArgs = 0)
+@Command(
+        value = "/help",
+        description = "Получить справочник по командам",
+        aliases = {"/h", "/?"},
+        minArgs = 0,
+        maxArgs = 0
+)
 public class HelpCommand extends BotCommand {
 
-    CommandService commandService;
+    private final CommandService commandService;
 
     public HelpCommand(TelegramSenderService senderService, @Lazy CommandService commandService) {
         super(senderService);
@@ -24,49 +30,55 @@ public class HelpCommand extends BotCommand {
     @Override
     public void execute(CommandArgs args) {
         var executor = args.getExecutor();
-        List<BotCommand> commands = commandService.getCommands();
-        String message = format(commands);
-        sendMessage(executor.getId(), message);
+        var text = composeText(executor.getRoles());
+        sendMessage(executor.getId(), text);
     }
 
-    private String format(List<BotCommand> commands) {
+    public String composeText(List<String> roles) {
+        var commands = commandService.getCommands();
         StringBuilder builder = new StringBuilder();
-        builder.append("*📖 Справочник по командам*\n\n");
-        builder.append("Каждая команда может иметь сокращения (алиасы) и ограничения по аргументам.\n\n");
 
-        for (BotCommand command : commands) {
-            builder.append("*")
-                    .append(command.getValue())
-                    .append("* ");
+        builder.append("<b>📖 Справочник по командам</b>\n\n")
+                .append("Каждая команда может иметь сокращения (алиасы) и ограничения по аргументам.\n\n");
 
-            if (command.getAliases() != null && command.getAliases().length > 0) {
-                builder.append("_")
-                        .append(formatAliases(command))
-                        .append("_");
+        for (var command : commands) {
+            // фильтрация по ролям
+            if (command.getAllowedRoles() != null && command.getAllowedRoles().length > 0) {
+                boolean hasAccess = Arrays.stream(command.getAllowedRoles())
+                        .anyMatch(roles::contains);
+                if (!hasAccess) continue;
             }
 
-            builder.append("\n")
-                    .append("— ")
+            builder.append("<b>")
+                    .append(command.getValue())
+                    .append("</b> ");
+
+            if (command.getAliases() != null && command.getAliases().length > 0) {
+                builder.append("<i>")
+                        .append(formatAliases(command))
+                        .append("</i>");
+            }
+
+            builder.append("\n— ")
                     .append(command.getDescription() != null ? command.getDescription() : "Без описания")
                     .append("\n");
 
             if (command.getUsage() != null && !command.getUsage().isEmpty()) {
-                builder.append("Пример: `")
+                builder.append("Пример: <code>")
                         .append(command.getUsage())
-                        .append("`\n");
+                        .append("</code>\n");
             }
 
             builder.append("\n");
         }
 
-        builder.append("_Используйте команды без скобок и символов <>_\n");
+        builder.append("<i>Используйте команды без скобок и символов &lt;&gt;</i>");
         return builder.toString();
     }
 
     private String formatAliases(BotCommand command) {
         return Arrays.stream(command.getAliases())
-                .map(a -> "`" + a + "`")
+                .map(a -> "<code>" + a + "</code>")
                 .collect(Collectors.joining(", "));
     }
 }
-

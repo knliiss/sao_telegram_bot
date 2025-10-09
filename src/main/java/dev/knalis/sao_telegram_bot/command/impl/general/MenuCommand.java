@@ -1,4 +1,4 @@
-package dev.knalis.sao_telegram_bot.command.impl;
+package dev.knalis.sao_telegram_bot.command.impl.general;
 
 import dev.knalis.sao_telegram_bot.command.BotCommand;
 import dev.knalis.sao_telegram_bot.command.Command;

@@ -7,10 +7,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class MessageContext {
+public class ComposerContext {
     Map<String, String> variables = new ConcurrentHashMap<>();
 
-    public MessageContext(String chatId) {
+    public ComposerContext(String chatId) {
+        put(ContextKey.CHAT_ID, chatId);
+    }
+
+    public ComposerContext(long id) {
+        String chatId = Long.toString(id);
         put(ContextKey.CHAT_ID, chatId);
     }
 

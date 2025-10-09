@@ -1,4 +1,4 @@
-package dev.knalis.sao_telegram_bot.composer;
+package dev.knalis.sao_telegram_bot.composer.intrf;
 
 import dev.knalis.sao_telegram_bot.model.button.Button;
 import dev.knalis.sao_telegram_bot.util.KeyboardUtil;
@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-public interface PageComposer extends MessageComposer {
+public interface PageComposer extends Composer {
 
     default List<InlineKeyboardButton> generateFooter(String callBackUrl, int page, int totalPage) {
         if (totalPage <= 1) return List.of();

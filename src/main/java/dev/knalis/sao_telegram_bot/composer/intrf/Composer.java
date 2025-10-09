@@ -1,14 +1,16 @@
-package dev.knalis.sao_telegram_bot.composer;
+package dev.knalis.sao_telegram_bot.composer.intrf;
 
+import dev.knalis.sao_telegram_bot.composer.ContextKey;
+import dev.knalis.sao_telegram_bot.composer.ComposerContext;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
 
-public interface MessageComposer {
+public interface Composer {
 
-    default SendMessage compose(MessageContext context) {
+    default SendMessage compose(ComposerContext context) {
         String chatId;
         try {
             chatId = context.get(ContextKey.CHAT_ID);
@@ -29,8 +31,8 @@ public interface MessageComposer {
                 .build();
     }
 
-    String composeText(MessageContext context);
+    String composeText(ComposerContext context);
 
-    List<List<InlineKeyboardButton>> composeButtons(MessageContext context);
+    List<List<InlineKeyboardButton>> composeButtons(ComposerContext context);
 
 }

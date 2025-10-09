@@ -1,1 +1,18 @@
-spring.application.name=sao_telegram_bot
+spring:
+  application:
+    name: sao-bot-service
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+  cache:
+    type: redis
+
+bot:
+    token: ${BOT_TOKEN}
+    name: ${BOT_NAME:Sao_Bot}
+
+api:
+  bot: ${BOT_API_URL:http://localhost:8090}

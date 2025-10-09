@@ -2,43 +2,47 @@ version: "3.9"
 
 services:
   app:
-    build: .
+    build:
+      context: .
     image: saobot:latest
+    container_name: sao_bot
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - MAIN_DATABASE_SERVICE_PORT=${MAIN_DATABASE_SERVICE_PORT}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      BOT_TOKEN: ${BOT_TOKEN}
+      BOT_NAME: ${BOT_NAME}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # подключение к API
+      BOT_API_URL: http://saoapi:8080
     ports:
-      - '8090:8080'
+      - "8070:8080" # бот доступен локально на 8070
     depends_on:
-      - mongodb
-      - postgres
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - saonet
 
-  mongodb:
-    image: 'mongo:latest'
-    environment:
-      - MONGO_INITDB_DATABASE=SaoBot_Mongo_Db
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=root
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    command: ["redis-server", "--save", "20", "1", "--loglevel", "warning"]
     ports:
-      - '27017:27017'
+      - "6379:6379"
     volumes:
-      - mongo_data:/data/db
-
-  postgres:
-    image: 'postgres:latest'
-    environment:
-      - POSTGRES_DB=SaoBot_Pg_Db
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-    ports:
-      - '5432:5432'
-    volumes:
-      - pg_data:/var/lib/postgresql/data
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - saonet
 
 volumes:
-  mongo_data:
-  pg_data:
+  redis-data:
+
+networks:
+  saonet:
+    external: true

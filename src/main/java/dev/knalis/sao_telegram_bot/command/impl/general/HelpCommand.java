@@ -42,7 +42,6 @@ public class HelpCommand extends BotCommand {
                 .append("Каждая команда может иметь сокращения (алиасы) и ограничения по аргументам.\n\n");
 
         for (var command : commands) {
-            // фильтрация по ролям
             if (command.getAllowedRoles() != null && command.getAllowedRoles().length > 0) {
                 boolean hasAccess = Arrays.stream(command.getAllowedRoles())
                         .anyMatch(roles::contains);
@@ -64,15 +63,15 @@ public class HelpCommand extends BotCommand {
                     .append("\n");
 
             if (command.getUsage() != null && !command.getUsage().isEmpty()) {
-                builder.append("Пример: <code>")
+                builder.append("Пример: <b>")
                         .append(command.getUsage())
-                        .append("</code>\n");
+                        .append("</b>\n");
             }
 
             builder.append("\n");
         }
 
-        builder.append("<i>Используйте команды без скобок и символов &lt;&gt;</i>");
+        builder.append("<i>Используйте команды без скобок и символов </i>");
         return builder.toString();
     }
 

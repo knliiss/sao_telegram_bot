@@ -1,7 +1,9 @@
 package dev.knalis.sao_telegram_bot.service;
 
 import dev.knalis.sao_telegram_bot.composer.ComposerContext;
+import dev.knalis.sao_telegram_bot.composer.impl.LocationMenuComposer;
 import dev.knalis.sao_telegram_bot.composer.impl.MenuComposer;
+import dev.knalis.sao_telegram_bot.composer.impl.ReminderMenuComposer;
 import dev.knalis.sao_telegram_bot.composer.impl.UserMenuComposer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,8 @@ public class MenuService {
 
     MenuComposer menuComposer;
     UserMenuComposer userMenuComposer;
+//    LocationMenuComposer locationMenuComposer;
+//    ReminderMenuComposer reminderMenuComposer;
 
     public SendMessage getMenu(ComposerContext context) {
         return menuComposer.compose(context);
@@ -28,5 +32,9 @@ public class MenuService {
     public SendMessage getLocationMenu(ComposerContext context) {
         // TODO implement location menu
         return null;
+    }
+
+    public SendMessage getReminderMenu(ComposerContext context) {
+    return null;
     }
 }

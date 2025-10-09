@@ -46,7 +46,7 @@ public class UserMenuComposer implements BackComposer {
         if (user.getSubscription() != null) {
             builder.append("<b>Подписка:</b> ")
                     .append(user.getSubscription().getPlan())
-                    .append(" (до ").append(user.getSubscription().getEndDate()).append(")\n");
+                    .append(" (до ").append(user.getSubscription().getEndDate() == null ? "" : user.getSubscription().getEndDate()).append(")\n\n");
         } else {
             builder.append("<b>Подписка:</b> отсутствует\n");
         }
@@ -73,12 +73,12 @@ public class UserMenuComposer implements BackComposer {
                         Button.builder().callbackData("user/" + chatIdStr + "/location").text("📍Изменить локацию").build().toInlineButton()
                 ),
                 List.of(
-                        Button.builder().callbackData("user/" + chatIdStr + "/notification").text("🔔 Уведомления").build().toInlineButton()
+                        Button.builder().callbackData("reminder/" + chatIdStr).text("🔔 Напоминания").build().toInlineButton()
                 ),
                 List.of(
                         Button.builder().callbackData("user/" + chatIdStr + "/account").text("⚙️ Управление аккаунтами").build().toInlineButton()
-                )
-
+                ),
+                generateBackButton("message/delete")
 
         );
     }

@@ -37,4 +37,8 @@ public class MenuService {
     public SendMessage getReminderMenu(ComposerContext context) {
     return null;
     }
+    
+    public SendMessage getSettingsMenu(ComposerContext context) {
+        return null;
+    }
 }

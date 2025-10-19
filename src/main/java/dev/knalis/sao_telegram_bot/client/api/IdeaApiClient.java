@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @FeignClient(name = "ideaApi", url = "${api.bot}")
-public interface IdeaApiClient {
+public interface    IdeaApiClient {
 
     @PostMapping("/api/v1/ideas")
     IdeaDTO postIdea(@RequestBody IdeaCreateRequest createRequest);

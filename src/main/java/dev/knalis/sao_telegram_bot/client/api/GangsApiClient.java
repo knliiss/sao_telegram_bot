@@ -16,8 +16,8 @@ public interface GangsApiClient {
     @GetMapping("/api/v1/gangs/{gangId}")
     GangDTO getGang(@PathVariable("gangId") Long gangId);
 
-    @PostMapping("/api/v1/gangs/{gangId}/transfer")
-    void transferOwnership(@PathVariable("gangId") Long gangId, @RequestParam("newOwnerId") Long newOwnerId);
+    @PostMapping("/api/v1/gangs/{userId}/transfer")
+    void transferOwnership(@PathVariable("userId") Long userId, @RequestParam("newOwnerId") Long newOwnerId);
 
     @PostMapping("/api/v1/gangs/{gangId}/members")
     void addMember(@PathVariable("gangId") Long gangId, @RequestParam("actorId") Long actorId, @RequestParam("targetId") Long targetId);

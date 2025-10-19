@@ -4,15 +4,10 @@ import dev.knalis.sao_telegram_bot.callback.annotation.AbstractCallBackControlle
 import dev.knalis.sao_telegram_bot.callback.annotation.CallBackController;
 import dev.knalis.sao_telegram_bot.callback.annotation.CallBackMethod;
 import dev.knalis.sao_telegram_bot.callback.annotation.PathVariable;
-import dev.knalis.sao_telegram_bot.client.dto.ConfigDTO;
 import dev.knalis.sao_telegram_bot.service.ConfigService;
 import dev.knalis.sao_telegram_bot.service.TelegramSenderService;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.boot.context.config.ConfigData;
-
-import java.util.List;
 
 
 @CallBackController("config/{userId}")
@@ -26,7 +21,7 @@ public class ConfigCallBackController extends AbstractCallBackController {
         this.configService = configService;
     }
     
-    @CallBackMethod("activate/{configId}")
+    @CallBackMethod("/activate/{configId}")
     public void activate(
             @PathVariable("userId") long userId,
             @PathVariable("configId") long configId) {

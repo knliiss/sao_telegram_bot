@@ -37,4 +37,12 @@ public class ComposerContext {
     public String get(ContextKey key) {
         return get(key.toString());
     }
+    
+    public String getOrDefault(String key, String defaultValue) {
+        return variables.getOrDefault(key, defaultValue);
+    }
+    
+    public boolean containsKey(String page) {
+        return variables.containsKey(page);
+    }
 }

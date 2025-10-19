@@ -3,7 +3,7 @@ package dev.knalis.sao_telegram_bot.command;
 import dev.knalis.sao_telegram_bot.bot.BotHandler;
 import dev.knalis.sao_telegram_bot.client.dto.UserDTO;
 import dev.knalis.sao_telegram_bot.model.AllowRequest;
-import dev.knalis.sao_telegram_bot.model.AllowResponse;
+import dev.knalis.sao_telegram_bot.dto.AllowResponse;
 import dev.knalis.sao_telegram_bot.service.TelegramSenderService;
 import org.springframework.stereotype.Component;
 

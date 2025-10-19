@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(name = "userSettingsApi", url = "${api.bot}")
 public interface UserSettingsApiClient {
     @GetMapping("/api/v1/users/{userId}/settings")
-    SettingsDTO getSettings(@PathVariable("userId") Long userId);
+    SettingsDTO getSettings(@PathVariable("userId") Long userId, @RequestParam String category);
 
     @PutMapping("/api/v1/users/{userId}/settings")
     void updateAllSettings(@PathVariable("userId") Long userId, @RequestBody SettingsDTO settingsDTO);

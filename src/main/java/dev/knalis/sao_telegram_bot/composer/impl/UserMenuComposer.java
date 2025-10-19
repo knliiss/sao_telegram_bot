@@ -1,11 +1,12 @@
 package dev.knalis.sao_telegram_bot.composer.impl;
 
-import dev.knalis.sao_telegram_bot.client.api.UserMessagePacksApiClient;
-import dev.knalis.sao_telegram_bot.client.api.UsersApiClient;
-import dev.knalis.sao_telegram_bot.composer.intrf.BackComposer;
-import dev.knalis.sao_telegram_bot.composer.ContextKey;
 import dev.knalis.sao_telegram_bot.composer.ComposerContext;
+import dev.knalis.sao_telegram_bot.composer.ContextKey;
+import dev.knalis.sao_telegram_bot.composer.intrf.BackComposer;
 import dev.knalis.sao_telegram_bot.model.button.Button;
+import dev.knalis.sao_telegram_bot.service.MessagePackService;
+import dev.knalis.sao_telegram_bot.service.SettingsService;
+import dev.knalis.sao_telegram_bot.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -14,25 +15,33 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.List;
 
-import static dev.knalis.sao_telegram_bot.util.KeyboardUtil.*;
+import static dev.knalis.sao_telegram_bot.util.KeyboardUtil.formCallbackButtons;
 
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserMenuComposer implements BackComposer {
-
-    UsersApiClient userClient;
-    UserMessagePacksApiClient userMessagePacksClient;
+    
+    UserService userService;
+    MessagePackService messagePackService;
+    SettingsService settingsService;
 
     @Override
     public String composeText(ComposerContext context) {
         String chatIdStr = context.get(ContextKey.CHAT_ID);
         Long chatId = Long.valueOf(chatIdStr);
-
-        var messagePack = userMessagePacksClient.getUserMessagePacks(chatId, true).getFirst();
-        var user = userClient.getUser(chatId);
-
+        
+        var user = userService.getUser(chatId);
         if (user == null) return "Пользователь не найден";
+
+        String currentPackName = "не выбран";
+        try {
+            var settings = settingsService.getSettings(chatId, "OTHER");
+            if (settings != null && settings.getMessagePackId() != null) {
+                var pack = messagePackService.getPackById(settings.getMessagePackId());
+                if (pack != null) currentPackName = pack.getName();
+            }
+        } catch (Exception ignored) {}
 
         StringBuilder builder = new StringBuilder();
         builder.append("<b>👤 Информация о пользователе</b>\n\n")
@@ -41,12 +50,14 @@ public class UserMenuComposer implements BackComposer {
                 .append("<b>Ник:</b> ").append(user.getNickname() != null ? user.getNickname() : "не задан").append("\n")
                 .append("<b>Баланс:</b> ").append(user.getBalance() != null ? user.getBalance() : 0.0).append(" 💰\n")
                 .append("<b>Локация:</b> ").append(user.getLocation()).append("\n")
-                .append("<b>Выбранный пак сообщений:</b> ").append(messagePack.getName()).append("\n\n");
+                .append("<b>Выбранный пак сообщений:</b> ").append(currentPackName).append("\n\n");
 
         if (user.getSubscription() != null) {
             builder.append("<b>Подписка:</b> ")
                     .append(user.getSubscription().getPlan())
-                    .append(" (до ").append(user.getSubscription().getEndDate() == null ? "" : user.getSubscription().getEndDate()).append(")\n\n");
+                    .append(" (до ")
+                    .append(user.getSubscription().getEndDate() == null ? "" : user.getSubscription().getEndDate())
+                    .append(")\n\n");
         } else {
             builder.append("<b>Подписка:</b> отсутствует\n");
         }
@@ -73,13 +84,12 @@ public class UserMenuComposer implements BackComposer {
                         Button.builder().callbackData("user/" + chatIdStr + "/location").text("📍Изменить локацию").build().toInlineButton()
                 ),
                 List.of(
-                        Button.builder().callbackData("reminder/" + chatIdStr).text("🔔 Напоминания").build().toInlineButton()
+                    Button.builder().callbackData("reminder/" + chatIdStr).text("🔔 Напоминания").build().toInlineButton()
                 ),
                 List.of(
                         Button.builder().callbackData("user/" + chatIdStr + "/account").text("⚙️ Управление аккаунтами").build().toInlineButton()
                 ),
-                generateBackButton("message/delete")
-
+                generateBackButton(context, "message/menu")
         );
     }
 }

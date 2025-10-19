@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class IdeaCreateRequest {
     private String content;
-    private Long authorId;
+    private long authorId;
 }

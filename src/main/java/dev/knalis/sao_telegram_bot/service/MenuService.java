@@ -1,10 +1,8 @@
 package dev.knalis.sao_telegram_bot.service;
 
 import dev.knalis.sao_telegram_bot.composer.ComposerContext;
-import dev.knalis.sao_telegram_bot.composer.impl.LocationMenuComposer;
-import dev.knalis.sao_telegram_bot.composer.impl.MenuComposer;
-import dev.knalis.sao_telegram_bot.composer.impl.ReminderMenuComposer;
-import dev.knalis.sao_telegram_bot.composer.impl.UserMenuComposer;
+import dev.knalis.sao_telegram_bot.composer.impl.*;
+import dev.knalis.sao_telegram_bot.composer.ContextKey;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -15,11 +13,16 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class MenuService {
-
     MenuComposer menuComposer;
     UserMenuComposer userMenuComposer;
-//    LocationMenuComposer locationMenuComposer;
-//    ReminderMenuComposer reminderMenuComposer;
+    IdeaMenuComposer ideaMenuComposer;
+    LocationMenuComposer locationMenuComposer;
+    ReminderMenuComposer reminderMenuComposer;
+    SettingsMenuComposer settingsMenuComposer;
+    MessagePackMenuComposer messagePackMenuComposer;
+    MessagePackDetailsComposer messagePackDetailsComposer;
+    GangMenuComposer gangMenuComposer;
+    AdditionalAccountsMenuComposer additionalAccountsMenuComposer;
 
     public SendMessage getMenu(ComposerContext context) {
         return menuComposer.compose(context);
@@ -30,15 +33,39 @@ public class MenuService {
     }
 
     public SendMessage getLocationMenu(ComposerContext context) {
-        // TODO implement location menu
-        return null;
+        return locationMenuComposer.compose(context);
     }
 
     public SendMessage getReminderMenu(ComposerContext context) {
-    return null;
+        return reminderMenuComposer.compose(context);
+    }
+
+    public SendMessage getSettingsMenu(ComposerContext context) {
+        return settingsMenuComposer.compose(context);
+    }
+
+    public SendMessage getMessagePackMenu(ComposerContext context) {
+        return messagePackMenuComposer.compose(context);
+    }
+
+    public SendMessage getMessagePackMenu(ComposerContext context, String messagePackId) {
+        context.put("messagePackId", messagePackId);
+        return messagePackDetailsComposer.compose(context);
+    }
+
+    public SendMessage getGangMenu(ComposerContext context) {
+        return gangMenuComposer.compose(context);
+    }
+
+    public SendMessage getAllGangMenu(ComposerContext context) {
+        return gangMenuComposer.compose(context);
+    }
+
+    public SendMessage getIdeaMenu(ComposerContext context) {
+        return ideaMenuComposer.compose(context);
     }
     
-    public SendMessage getSettingsMenu(ComposerContext context) {
-        return null;
+    public SendMessage getAdditionalAccountsMenu(ComposerContext context) {
+        return additionalAccountsMenuComposer.compose(context);
     }
 }

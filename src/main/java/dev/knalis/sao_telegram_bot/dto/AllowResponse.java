@@ -1,4 +1,4 @@
-package dev.knalis.sao_telegram_bot.model;
+package dev.knalis.sao_telegram_bot.dto;
 
 import lombok.Data;
 
